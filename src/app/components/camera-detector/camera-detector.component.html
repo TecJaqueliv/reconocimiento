@@ -1,0 +1,22 @@
+<div class="camera-container">
+  <div class="video-container">
+    <video #video autoplay playsinline muted></video>
+    <canvas #canvas></canvas>
+  </div>
+  
+  <div class="controls">
+    <button (click)="startCamera()" [disabled]="!isModelLoaded">
+      {{isModelLoaded ? 'Iniciar Cámara' : 'Cargando modelo...'}}
+    </button>
+    <button (click)="stopCamera()">Detener Cámara</button>
+    <button (click)="resetCounter()" class="reset-button">Reiniciar Contador</button>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{error}}
+  </div>
+
+  <div class="counter">
+    <h3>Objetos Detectados: {{objectCount}}</h3>
+  </div>
+</div> 

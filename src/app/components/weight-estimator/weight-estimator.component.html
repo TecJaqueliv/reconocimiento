@@ -1,0 +1,46 @@
+<div class="weight-estimator">
+  <h2>Estimación por Peso</h2>
+  
+  <div class="input-group">
+    <label for="weight">Peso Total (gramos):</label>
+    <input 
+      type="number" 
+      id="weight" 
+      [value]="totalWeight"
+      (input)="onWeightChange($event)"
+      min="0"
+      step="200"
+    >
+  </div>
+
+  <div class="results">
+    <div class="result-item">
+      <span>Bisagras Estimadas (por peso):</span>
+      <strong>{{estimatedCount}}</strong>
+    </div>
+    
+    <div class="result-item">
+      <span>Bisagras Detectadas (por cámara):</span>
+      <strong>{{cameraCount}}</strong>
+    </div>
+
+    <div class="result-item">
+      <span>Peso Esperado:</span>
+      <strong>{{getExpectedWeight()}} g</strong>
+    </div>
+    
+    <div class="result-item" [class.difference-positive]="difference > 0" [class.difference-negative]="difference < 0">
+      <span>Diferencia en Cantidad:</span>
+      <strong>{{difference}}</strong>
+    </div>
+
+    <div class="result-item" [class.difference-positive]="getWeightDifference() > 0" [class.difference-negative]="getWeightDifference() < 0">
+      <span>Diferencia en Peso:</span>
+      <strong>{{getWeightDifference()}} g</strong>
+    </div>
+  </div>
+
+  <div class="info-text">
+    <p>Peso por bisagra: {{WEIGHT_PER_HINGE}} g</p>
+  </div>
+</div> 

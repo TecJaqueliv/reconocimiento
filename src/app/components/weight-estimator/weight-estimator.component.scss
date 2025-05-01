@@ -1,0 +1,86 @@
+.weight-estimator {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+  }
+}
+
+.input-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+  }
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  span {
+    color: #666;
+  }
+
+  strong {
+    font-size: 18px;
+    color: #333;
+  }
+
+  &.difference-positive {
+    strong {
+      color: #28a745;
+    }
+  }
+
+  &.difference-negative {
+    strong {
+      color: #dc3545;
+    }
+  }
+}
+
+.info-text {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+  }
+} 

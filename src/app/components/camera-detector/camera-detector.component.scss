@@ -1,0 +1,68 @@
+.camera-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+.video-container {
+  position: relative;
+  width: 640px;
+  height: 480px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+
+  video, canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  width: 100%;
+  max-width: 640px;
+}
+
+.counter {
+  h3 {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+  }
+} 
