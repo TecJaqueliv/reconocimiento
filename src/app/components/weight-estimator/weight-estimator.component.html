@@ -1,42 +1,52 @@
 <div class="weight-estimator">
-  <h2>Estimación por Peso</h2>
+  <h2>Estimador de Peso</h2>
   
   <div class="input-group">
-    <label for="weight">Peso Total (gramos):</label>
-    <input 
-      type="number" 
-      id="weight" 
-      [value]="totalWeight"
-      (input)="onWeightChange($event)"
-      min="0"
-      step="200"
-    >
+    <label for="weight">Peso Total:</label>
+    <div class="input-with-unit">
+      <input 
+        type="number" 
+        id="weight" 
+        [ngModel]="getDisplayWeight()" 
+        (ngModelChange)="onWeightChange($event)"
+        step="0.1"
+        min="0"
+      >
+      <select [(ngModel)]="weightUnit" (change)="onUnitChange($event)">
+        <option value="kg">kg</option>
+        <option value="g">g</option>
+      </select>
+    </div>
   </div>
 
   <div class="results">
     <div class="result-item">
-      <span>Bisagras Estimadas (por peso):</span>
-      <strong>{{estimatedCount}}</strong>
+      <span class="label">Cantidad Estimada:</span>
+      <span class="value">{{ estimatedCount }} bisagras</span>
     </div>
     
     <div class="result-item">
-      <span>Bisagras Detectadas (por cámara):</span>
-      <strong>{{cameraCount}}</strong>
+      <span class="label">Cantidad por Cámara:</span>
+      <span class="value">{{ cameraCount }} bisagras</span>
+    </div>
+    
+    <div class="result-item">
+      <span class="label">Diferencia:</span>
+      <span class="value" [class.positive]="difference > 0" [class.negative]="difference < 0">
+        {{ difference }} bisagras
+      </span>
     </div>
 
     <div class="result-item">
-      <span>Peso Esperado:</span>
-      <strong>{{getExpectedWeight()}} g</strong>
-    </div>
-    
-    <div class="result-item" [class.difference-positive]="difference > 0" [class.difference-negative]="difference < 0">
-      <span>Diferencia en Cantidad:</span>
-      <strong>{{difference}}</strong>
+      <span class="label">Peso Esperado:</span>
+      <span class="value">{{ getDisplayExpectedWeight() | number:'1.2-2' }} {{ getWeightUnitSymbol() }}</span>
     </div>
 
-    <div class="result-item" [class.difference-positive]="getWeightDifference() > 0" [class.difference-negative]="getWeightDifference() < 0">
-      <span>Diferencia en Peso:</span>
-      <strong>{{getWeightDifference()}} g</strong>
+    <div class="result-item">
+      <span class="label">Diferencia de Peso:</span>
+      <span class="value" [class.positive]="getWeightDifference() > 0" [class.negative]="getWeightDifference() < 0">
+        {{ getDisplayWeightDifference() | number:'1.2-2' }} {{ getWeightUnitSymbol() }}
+      </span>
     </div>
   </div>
 

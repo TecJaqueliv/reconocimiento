@@ -1,22 +1,126 @@
 <div class="camera-container">
-  <div class="video-container">
-    <video #video autoplay playsinline muted></video>
+  <div class="status-messages">
+    <div *ngIf="!isModelLoaded && !loadingError" class="loading">
+      Cargando modelo de detección...
+    </div>
+    <div *ngIf="loadingError" class="error">
+      {{ loadingError }}
+    </div>
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+  </div>
+
+  <div class="video-container" *ngIf="isModelLoaded">
+    <video #video autoplay playsinline></video>
     <canvas #canvas></canvas>
   </div>
-  
+
   <div class="controls">
-    <button (click)="startCamera()" [disabled]="!isModelLoaded">
-      {{isModelLoaded ? 'Iniciar Cámara' : 'Cargando modelo...'}}
+    <div class="counter">
+      Objetos detectados: {{ objectCount }}
+    </div>
+    <button (click)="resetCounter()" [disabled]="!isCameraActive">
+      Reiniciar Contador
     </button>
-    <button (click)="stopCamera()">Detener Cámara</button>
-    <button (click)="resetCounter()" class="reset-button">Reiniciar Contador</button>
   </div>
 
-  <div class="error-message" *ngIf="error">
-    {{error}}
+  <div class="debug-info" *ngIf="debugInfo">
+    <pre>{{ debugInfo }}</pre>
   </div>
+</div>
 
-  <div class="counter">
-    <h3>Objetos Detectados: {{objectCount}}</h3>
-  </div>
-</div> 
+<style>
+.camera-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.status-messages {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.loading {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.video-container {
+  position: relative;
+  width: 320px;
+  height: 240px;
+  margin-bottom: 20px;
+  border: 2px solid #007bff;
+}
+
+video, canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+canvas {
+  z-index: 1;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.counter {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.debug-info {
+  width: 100%;
+  max-width: 600px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 12px;
+  border: 1px solid #dee2e6;
+}
+
+.debug-info pre {
+  margin: 0;
+}
+</style> 

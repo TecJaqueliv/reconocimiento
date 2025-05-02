@@ -1,72 +1,97 @@
 .weight-estimator {
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: #f5f5f5;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   h2 {
-    margin: 0 0 20px 0;
+    margin-bottom: 20px;
     color: #333;
-  }
-}
-
-.input-group {
-  margin-bottom: 20px;
-
-  label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
+    text-align: center;
   }
 
-  input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    
-    &:focus {
-      outline: none;
-      border-color: #007bff;
+  .input-group {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #666;
     }
-  }
-}
 
-.results {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-}
+    .input-with-unit {
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-.result-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        width: 100%;
+        max-width: 200px;
 
-  span {
-    color: #666;
-  }
+        &:focus {
+          outline: none;
+          border-color: #4CAF50;
+          box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+      }
 
-  strong {
-    font-size: 18px;
-    color: #333;
-  }
+      select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 16px;
+        cursor: pointer;
 
-  &.difference-positive {
-    strong {
-      color: #28a745;
+        &:focus {
+          outline: none;
+          border-color: #4CAF50;
+        }
+      }
     }
   }
 
-  &.difference-negative {
-    strong {
-      color: #dc3545;
+  .results {
+    display: grid;
+    gap: 12px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .value {
+        font-weight: 500;
+        color: #333;
+
+        &.positive {
+          color: #4CAF50;
+        }
+
+        &.negative {
+          color: #f44336;
+        }
+      }
     }
   }
 }

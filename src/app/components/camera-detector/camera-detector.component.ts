@@ -18,6 +18,15 @@ export class CameraDetectorComponent implements OnInit, OnDestroy, AfterViewInit
   objectCount: number = 0;
   isModelLoaded: boolean = false;
   error: string = '';
+  loadingError: string = '';
+  debugInfo: string = '';
+  private readonly TARGET_FPS = 10;
+  private lastFrameTime = 0;
+  isCameraActive: boolean = false;
+  private readonly RESOLUTION = {
+    width: 320,
+    height: 240
+  };
 
   constructor(private objectDetectionService: ObjectDetectionService) {}
 
@@ -30,29 +39,45 @@ export class CameraDetectorComponent implements OnInit, OnDestroy, AfterViewInit
       this.isModelLoaded = loaded;
       if (loaded) {
         console.log('Modelo cargado correctamente');
+        this.startCamera();
       }
+    });
+
+    this.objectDetectionService.loadingError$.subscribe(error => {
+      this.loadingError = error;
+      if (error) {
+        console.error('Error cargando el modelo:', error);
+      }
+    });
+
+    this.objectDetectionService.debugInfo$.subscribe(info => {
+      this.debugInfo = info;
     });
   }
 
   ngAfterViewInit() {
     const canvas = this.canvas.nativeElement;
-    canvas.width = 640;
-    canvas.height = 480;
+    canvas.width = this.RESOLUTION.width;
+    canvas.height = this.RESOLUTION.height;
   }
 
   async startCamera() {
+    if (this.isCameraActive) return;
+
     try {
       this.error = '';
       console.log('Solicitando permisos de cámara...');
       
-      const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
-      console.log('Estado de permisos:', permissions.state);
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Tu navegador no soporta el acceso a la cámara');
+      }
 
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: 'environment'
+          width: { ideal: this.RESOLUTION.width },
+          height: { ideal: this.RESOLUTION.height },
+          facingMode: 'environment',
+          frameRate: { ideal: this.TARGET_FPS }
         },
         audio: false
       });
@@ -62,25 +87,39 @@ export class CameraDetectorComponent implements OnInit, OnDestroy, AfterViewInit
       const videoElement = this.video.nativeElement;
       videoElement.srcObject = this.stream;
       
-      await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve, reject) => {
         videoElement.onloadedmetadata = () => {
-          videoElement.play().then(() => {
-            console.log('Video iniciado');
-            resolve();
-          }).catch(err => {
-            console.error('Error al reproducir el video:', err);
-            this.error = 'Error al iniciar la reproducción del video';
-          });
+          videoElement.play()
+            .then(() => {
+              console.log('Video iniciado');
+              this.isCameraActive = true;
+              resolve();
+            })
+            .catch(err => {
+              console.error('Error al reproducir el video:', err);
+              this.error = 'Error al iniciar la reproducción del video';
+              reject(err);
+            });
         };
+
+        setTimeout(() => {
+          if (!this.isCameraActive) {
+            reject(new Error('Timeout al iniciar la cámara'));
+          }
+        }, 5000);
       });
 
       this.detectFrame();
     } catch (error: any) {
       console.error('Error al acceder a la cámara:', error);
+      this.isCameraActive = false;
+      
       if (error.name === 'NotAllowedError') {
         this.error = 'Acceso a la cámara denegado. Por favor, permite el acceso a la cámara en tu navegador.';
       } else if (error.name === 'NotFoundError') {
         this.error = 'No se encontró ninguna cámara. Por favor, conecta una cámara y vuelve a intentarlo.';
+      } else if (error.message.includes('Timeout')) {
+        this.error = 'La cámara tardó demasiado en iniciar. Por favor, intenta nuevamente.';
       } else {
         this.error = `Error al acceder a la cámara: ${error.message || 'Error desconocido'}`;
       }
@@ -90,9 +129,16 @@ export class CameraDetectorComponent implements OnInit, OnDestroy, AfterViewInit
   private async detectFrame() {
     if (!this.video.nativeElement || !this.stream) return;
 
-    if (this.video.nativeElement.readyState === this.video.nativeElement.HAVE_ENOUGH_DATA) {
-      const predictions = await this.objectDetectionService.detectObjects(this.video.nativeElement);
-      this.drawFrame(predictions);
+    const now = performance.now();
+    const elapsed = now - this.lastFrameTime;
+    const targetInterval = 1000 / this.TARGET_FPS;
+
+    if (elapsed >= targetInterval) {
+      if (this.video.nativeElement.readyState === this.video.nativeElement.HAVE_ENOUGH_DATA) {
+        const predictions = await this.objectDetectionService.detectObjects(this.video.nativeElement);
+        this.drawFrame(predictions);
+      }
+      this.lastFrameTime = now;
     }
 
     this.animationFrameId = requestAnimationFrame(() => this.detectFrame());
@@ -134,7 +180,7 @@ export class CameraDetectorComponent implements OnInit, OnDestroy, AfterViewInit
       
       // Dibujar la etiqueta
       ctx.fillStyle = '#00ff00';
-      ctx.font = '16px Arial';
+      ctx.font = '10px Arial';
       ctx.fillText(`${prediction.class} (${Math.round(prediction.score * 100)}%)`, x, y > 10 ? y - 5 : 10);
     });
   }
